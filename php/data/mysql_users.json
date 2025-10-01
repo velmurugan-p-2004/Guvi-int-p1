@@ -12,5 +12,19 @@
         "email": "velmurugan.course2023@gmail.com",
         "password": "$2y$12$J.sRNCRueCbSV2UFfp7xVuc\/4k.NAJ00y\/VNxW1hig3NW30\/YPua6",
         "created_at": "2025-10-01 02:58:47"
+    },
+    {
+        "id": 3,
+        "username": "testuser123",
+        "email": "test@example.com",
+        "password": "$2y$12$H1npXmG\/Z32uai0m\/MvrCOwfIYUP6MOuqPBWvKRedhJ0OStX.a2HO",
+        "created_at": "2025-10-01 03:07:36"
+    },
+    {
+        "id": 4,
+        "username": "admin12",
+        "email": "krnshyrle39@examtestseries.online",
+        "password": "$2y$12$pacG6y2WhoUofuc0FWSeQ.3Rz9Ct\/rsP2lWWlttr.d7WeDMRrjeLm",
+        "created_at": "2025-10-01 03:08:20"
     }
 ]
