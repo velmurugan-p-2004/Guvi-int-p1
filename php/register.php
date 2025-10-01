@@ -1,5 +1,5 @@
 <?php
-require_once 'simple_auth.php';
+require_once 'hybrid_auth.php';
 
 header('Content-Type: application/json');
 
@@ -17,7 +17,7 @@ if (!$input) {
     exit;
 }
 
-$auth = new SimpleAuth();
+$auth = new HybridAuth();
 
 // Validate required fields
 $required_fields = ['username', 'email', 'password'];

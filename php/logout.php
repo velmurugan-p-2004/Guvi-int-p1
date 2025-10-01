@@ -1,5 +1,5 @@
 <?php
-require_once 'simple_auth.php';
+require_once 'hybrid_auth.php';
 
 header('Content-Type: application/json');
 
@@ -17,7 +17,7 @@ if (!$input || empty($input['session_token'])) {
     exit;
 }
 
-$auth = new SimpleAuth();
+$auth = new HybridAuth();
 $result = $auth->logout($input['session_token']);
 
 if (!$result['success']) {

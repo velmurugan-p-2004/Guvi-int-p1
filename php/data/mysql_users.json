@@ -1,0 +1,16 @@
+[
+    {
+        "id": 1,
+        "username": "admin",
+        "email": "freefiremoney0010@gmail.com",
+        "password": "$2y$12$GCIyd9yDRVCFVnt0RwGayebZnvHLmAgvY3LotYHTs6KuOeEihw2g2",
+        "created_at": "2025-10-01 02:29:23"
+    },
+    {
+        "id": 2,
+        "username": "admin11",
+        "email": "velmurugan.course2023@gmail.com",
+        "password": "$2y$12$J.sRNCRueCbSV2UFfp7xVuc\/4k.NAJ00y\/VNxW1hig3NW30\/YPua6",
+        "created_at": "2025-10-01 02:58:47"
+    }
+]

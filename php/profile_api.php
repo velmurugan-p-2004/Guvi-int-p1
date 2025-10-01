@@ -1,10 +1,9 @@
 <?php
-require_once 'simple_auth.php';
+require_once 'hybrid_auth.php';
 
 header('Content-Type: application/json');
 
-$auth = new SimpleAuth();
-$profileManager = new SimpleProfile();
+$auth = new HybridAuth();
 
 // Get session token from headers
 $headers = getallheaders();
@@ -31,7 +30,7 @@ $userId = $sessionResult['data']['user_id'];
 
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     // Get profile
-    $result = $profileManager->getProfile($userId);
+    $result = $auth->getProfile($userId);
     if (!$result['success']) {
         http_response_code(404);
     }
@@ -47,15 +46,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
         exit;
     }
     
-    $result = $profileManager->updateProfile($userId, $input);
+    $result = $auth->updateProfile($userId, $input);
     if (!$result['success']) {
         http_response_code(400);
     }
     echo json_encode($result);
     
 } elseif ($_SERVER['REQUEST_METHOD'] === 'DELETE') {
-    // Delete profile
-    $result = $profileManager->deleteProfile($userId);
+    // Delete profile - not implemented for this version
+    $result = ['success' => false, 'message' => 'Delete not implemented'];
     if (!$result['success']) {
         http_response_code(400);
     }
