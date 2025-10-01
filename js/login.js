@@ -1,5 +1,6 @@
 $(document).ready(function() {
-    const API_BASE_URL = 'php/';
+    // Client-side version for static hosting (no PHP backend)
+    const API_BASE_URL = './';
     
     // Check if user is already logged in
     if (localStorage.getItem('session_token')) {
@@ -70,16 +71,38 @@ $(document).ready(function() {
         
         setLoadingState(true);
         
-        $.ajax({
-            url: API_BASE_URL + 'login.php',
-            type: 'POST',
-            contentType: 'application/json',
-            data: JSON.stringify(formData),
-            success: function(response) {
-                if (response.success) {
+        // Client-side login using localStorage (for static hosting)
+        setTimeout(() => {
+            try {
+                // Get users from localStorage
+                const users = JSON.parse(localStorage.getItem('users') || '[]');
+                
+                // Find user by username or email
+                const user = users.find(u => 
+                    (u.username === formData.username || u.email === formData.username) &&
+                    atob(u.password) === formData.password
+                );
+                
+                if (user) {
+                    // Generate a simple session token
+                    const sessionToken = 'token_' + user.id + '_' + Date.now();
+                    
                     // Store session data in localStorage
-                    localStorage.setItem('session_token', response.session_token);
-                    localStorage.setItem('user_data', JSON.stringify(response.user));
+                    localStorage.setItem('session_token', sessionToken);
+                    localStorage.setItem('user_data', JSON.stringify({
+                        id: user.id,
+                        username: user.username,
+                        email: user.email
+                    }));
+                    
+                    // Store session in localStorage sessions
+                    let sessions = JSON.parse(localStorage.getItem('sessions') || '[]');
+                    sessions.push({
+                        token: sessionToken,
+                        user_id: user.id,
+                        created_at: new Date().toISOString()
+                    });
+                    localStorage.setItem('sessions', JSON.stringify(sessions));
                     
                     showAlert('Login successful! Redirecting...', 'success');
                     
@@ -88,28 +111,14 @@ $(document).ready(function() {
                         window.location.href = 'profile.html';
                     }, 1000);
                 } else {
-                    showAlert(response.message || 'Login failed');
+                    showAlert('Invalid username or password.');
                 }
-            },
-            error: function(xhr) {
-                let errorMessage = 'Login failed. Please try again.';
-                
-                if (xhr.responseJSON && xhr.responseJSON.message) {
-                    errorMessage = xhr.responseJSON.message;
-                } else if (xhr.status === 0) {
-                    errorMessage = 'Network error. Please check your connection.';
-                } else if (xhr.status === 401) {
-                    errorMessage = 'Invalid username or password.';
-                } else if (xhr.status >= 500) {
-                    errorMessage = 'Server error. Please try again later.';
-                }
-                
-                showAlert(errorMessage);
-            },
-            complete: function() {
-                setLoadingState(false);
+            } catch (error) {
+                showAlert('Login failed. Please try again.');
             }
-        });
+            
+            setLoadingState(false);
+        }, 1000); // Simulate network delay
     });
     
     // Clear validation states on input

@@ -1,5 +1,6 @@
 $(document).ready(function() {
-    const API_BASE_URL = 'php/';
+    // Client-side version for static hosting (no PHP backend)
+    const API_BASE_URL = './';
     
     // Show alert function
     function showAlert(message, type = 'danger') {
@@ -83,41 +84,65 @@ $(document).ready(function() {
         
         setLoadingState(true);
         
-        $.ajax({
-            url: API_BASE_URL + 'register.php',
-            type: 'POST',
-            contentType: 'application/json',
-            data: JSON.stringify(formData),
-            success: function(response) {
-                if (response.success) {
-                    showAlert('Registration successful! You can now login.', 'success');
-                    $('#registerForm')[0].reset();
-                    
-                    // Redirect to login page after 2 seconds
-                    setTimeout(() => {
-                        window.location.href = 'login.html';
-                    }, 2000);
-                } else {
-                    showAlert(response.message || 'Registration failed');
-                }
-            },
-            error: function(xhr) {
-                let errorMessage = 'Registration failed. Please try again.';
+        // Client-side registration using localStorage (for static hosting)
+        setTimeout(() => {
+            try {
+                // Get existing users from localStorage
+                let users = JSON.parse(localStorage.getItem('users') || '[]');
                 
-                if (xhr.responseJSON && xhr.responseJSON.message) {
-                    errorMessage = xhr.responseJSON.message;
-                } else if (xhr.status === 0) {
-                    errorMessage = 'Network error. Please check your connection.';
-                } else if (xhr.status >= 500) {
-                    errorMessage = 'Server error. Please try again later.';
+                // Check if username or email already exists
+                const existingUser = users.find(user => 
+                    user.username === formData.username || user.email === formData.email
+                );
+                
+                if (existingUser) {
+                    const message = existingUser.username === formData.username ? 
+                        'Username already exists' : 'Email already registered';
+                    showAlert(message);
+                    setLoadingState(false);
+                    return;
                 }
                 
-                showAlert(errorMessage);
-            },
-            complete: function() {
-                setLoadingState(false);
+                // Create new user
+                const newUser = {
+                    id: users.length + 1,
+                    username: formData.username,
+                    email: formData.email,
+                    password: btoa(formData.password), // Simple encoding for demo
+                    created_at: new Date().toISOString()
+                };
+                
+                users.push(newUser);
+                localStorage.setItem('users', JSON.stringify(users));
+                
+                // Also create user profile in localStorage
+                let profiles = JSON.parse(localStorage.getItem('profiles') || '[]');
+                profiles.push({
+                    user_id: newUser.id,
+                    username: newUser.username,
+                    email: newUser.email,
+                    full_name: '',
+                    bio: '',
+                    location: '',
+                    website: '',
+                    updated_at: new Date().toISOString()
+                });
+                localStorage.setItem('profiles', JSON.stringify(profiles));
+                
+                showAlert('Registration successful! You can now login.', 'success');
+                $('#registerForm')[0].reset();
+                
+                // Redirect to login page after 2 seconds
+                setTimeout(() => {
+                    window.location.href = 'login.html';
+                }, 2000);
+                
+            } catch (error) {
+                showAlert('Registration failed. Please try again.');
             }
-        });
+            
+            setLoadingState(false);
+        }, 1000); // Simulate network delay
     });
     
     // Real-time validation feedback

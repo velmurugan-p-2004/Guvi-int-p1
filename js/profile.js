@@ -1,5 +1,6 @@
 $(document).ready(function() {
-    const API_BASE_URL = 'php/';
+    // Client-side version for static hosting (no PHP backend)
+    const API_BASE_URL = './';
     let currentUser = null;
     let sessionToken = null;
     let isEditMode = false;
@@ -46,37 +47,34 @@ $(document).ready(function() {
         }, 5000);
     }
     
-    // Load user profile
+    // Load user profile (client-side version)
     function loadProfile() {
-        $.ajax({
-            url: API_BASE_URL + 'profile_api.php',
-            type: 'GET',
-            headers: {
-                'Authorization': sessionToken
-            },
-            success: function(response) {
-                if (response.success && response.profile) {
-                    populateProfileView(response.profile);
-                    populateProfileForm(response.profile);
-                } else {
-                    // Profile doesn't exist yet - show empty state
-                    populateProfileView({});
-                    populateProfileForm({});
-                }
-            },
-            error: function(xhr) {
-                if (xhr.status === 401) {
-                    localStorage.clear();
-                    window.location.href = 'login.html';
-                } else if (xhr.status === 404) {
-                    // Profile not found - this is okay for new users
-                    populateProfileView({});
-                    populateProfileForm({});
-                } else {
-                    showAlert('Failed to load profile data', 'danger');
-                }
+        try {
+            // Get profile from localStorage
+            const profiles = JSON.parse(localStorage.getItem('profiles') || '[]');
+            const userProfile = profiles.find(p => p.user_id === currentUser.id);
+            
+            if (userProfile) {
+                populateProfileView(userProfile);
+                populateProfileForm(userProfile);
+            } else {
+                // Profile doesn't exist yet - create default profile
+                const defaultProfile = {
+                    user_id: currentUser.id,
+                    username: currentUser.username,
+                    email: currentUser.email,
+                    full_name: '',
+                    bio: '',
+                    location: '',
+                    website: '',
+                    updated_at: new Date().toISOString()
+                };
+                populateProfileView(defaultProfile);
+                populateProfileForm(defaultProfile);
             }
-        });
+        } catch (error) {
+            showAlert('Failed to load profile data', 'danger');
+        }
     }
     
     // Populate profile view
@@ -150,55 +148,57 @@ $(document).ready(function() {
         
         setSaveLoadingState(true);
         
-        $.ajax({
-            url: API_BASE_URL + 'profile_api.php',
-            type: 'POST',
-            headers: {
-                'Authorization': sessionToken,
-                'Content-Type': 'application/json'
-            },
-            data: JSON.stringify(formData),
-            success: function(response) {
-                if (response.success) {
-                    showAlert('Profile updated successfully!', 'success');
-                    populateProfileView(formData);
-                    toggleEditMode();
+        // Client-side profile save using localStorage
+        setTimeout(() => {
+            try {
+                // Get existing profiles
+                let profiles = JSON.parse(localStorage.getItem('profiles') || '[]');
+                
+                // Find and update user's profile
+                const profileIndex = profiles.findIndex(p => p.user_id === currentUser.id);
+                
+                const updatedProfile = {
+                    user_id: currentUser.id,
+                    username: currentUser.username,
+                    email: currentUser.email,
+                    full_name: (formData.first_name + ' ' + formData.last_name).trim(),
+                    age: formData.age,
+                    date_of_birth: formData.date_of_birth,
+                    contact: formData.contact,
+                    address: formData.address,
+                    city: formData.city,
+                    country: formData.country,
+                    bio: formData.bio,
+                    updated_at: new Date().toISOString()
+                };
+                
+                if (profileIndex >= 0) {
+                    profiles[profileIndex] = updatedProfile;
                 } else {
-                    showAlert(response.message || 'Failed to update profile', 'danger');
-                }
-            },
-            error: function(xhr) {
-                let errorMessage = 'Failed to update profile. Please try again.';
-                
-                if (xhr.status === 401) {
-                    localStorage.clear();
-                    window.location.href = 'login.html';
-                    return;
-                } else if (xhr.responseJSON && xhr.responseJSON.message) {
-                    errorMessage = xhr.responseJSON.message;
+                    profiles.push(updatedProfile);
                 }
                 
-                showAlert(errorMessage, 'danger');
-            },
-            complete: function() {
-                setSaveLoadingState(false);
+                localStorage.setItem('profiles', JSON.stringify(profiles));
+                
+                showAlert('Profile updated successfully!', 'success');
+                populateProfileView(updatedProfile);
+                toggleEditMode();
+                
+            } catch (error) {
+                showAlert('Failed to update profile. Please try again.', 'danger');
             }
-        });
+            
+            setSaveLoadingState(false);
+        }, 1000); // Simulate network delay
     }
     
-    // Logout function
+    // Logout function (client-side version)
     function logout() {
         if (confirm('Are you sure you want to logout?')) {
-            $.ajax({
-                url: API_BASE_URL + 'logout.php',
-                type: 'POST',
-                contentType: 'application/json',
-                data: JSON.stringify({ session_token: sessionToken }),
-                complete: function() {
-                    localStorage.clear();
-                    window.location.href = 'login.html';
-                }
-            });
+            // Clear all localStorage data
+            localStorage.removeItem('session_token');
+            localStorage.removeItem('user_data');
+            window.location.href = 'login.html';
         }
     }
     

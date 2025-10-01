@@ -1,36 +1,31 @@
 {
   "name": "user-management-system",
   "version": "1.0.0",
-  "description": "A complete user registration and profile management system",
+  "description": "A complete user registration and profile management system - Client-side version for static hosting",
   "main": "index.html",
   "scripts": {
-    "start": "php -S localhost:8000",
+    "build": "echo \"Static site - no build needed\" && exit 0",
     "test": "echo \"No tests specified\" && exit 0"
   },
   "repository": {
     "type": "git",
-    "url": "your-repository-url"
+    "url": "https://github.com/velmurugan-p-2004/Guvi-int-p1"
   },
   "keywords": [
-    "php",
-    "mysql",
-    "mongodb",
-    "redis",
+    "html",
+    "css",
+    "javascript",
     "jquery",
     "bootstrap",
     "user-management",
-    "authentication"
+    "authentication",
+    "static-site"
   ],
-  "author": "Your Name",
+  "author": "Velmurugan P",
   "license": "MIT",
-  "dependencies": {
-    "php": ">=7.4",
-    "mysql": ">=5.7",
-    "mongodb": ">=4.0",
-    "redis": ">=6.0"
-  },
+  "dependencies": {},
   "devDependencies": {},
   "engines": {
-    "php": ">=7.4"
+    "node": ">=14.0.0"
   }
 }
