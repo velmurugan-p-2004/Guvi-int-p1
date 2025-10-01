@@ -1,0 +1,36 @@
+{
+  "name": "user-management-system",
+  "version": "1.0.0",
+  "description": "A complete user registration and profile management system",
+  "main": "index.html",
+  "scripts": {
+    "start": "php -S localhost:8000",
+    "test": "echo \"No tests specified\" && exit 0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "your-repository-url"
+  },
+  "keywords": [
+    "php",
+    "mysql",
+    "mongodb",
+    "redis",
+    "jquery",
+    "bootstrap",
+    "user-management",
+    "authentication"
+  ],
+  "author": "Your Name",
+  "license": "MIT",
+  "dependencies": {
+    "php": ">=7.4",
+    "mysql": ">=5.7",
+    "mongodb": ">=4.0",
+    "redis": ">=6.0"
+  },
+  "devDependencies": {},
+  "engines": {
+    "php": ">=7.4"
+  }
+}
